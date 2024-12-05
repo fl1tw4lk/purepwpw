@@ -1,0 +1,111 @@
+--=====================|| UTS ||========================--
+-- LATIHAN MANG
+Tabel PenduduK:
+create table Penduduk (
+	NIK int(3) NOT NULL primary key, 
+	Nama varchar(40) not null,
+	Tanggal_Lahir date,
+	Tempat_Lahir Varchar(40) not null, 
+	Jenis_Kelamin enum('l', 'p') not null, 
+	Status_Pernikahan enum('menikah', 'belum menikah', 'duda', 'janda') not null
+	);
+
+INSERT INTO Penduduk (NIK, Nama, Tanggal_Lahir, Tempat_Lahir, Jenis_Kelamin, Status_Pernikahan) VALUES
+(123, 'Andi Arjuna', '1970-01-01', 'Bandung, Jawa Barat', 'l', 'menikah'),
+(124, 'Mirnawati', '1970-02-03', 'Jakarta, DKI Jakarta', 'p', 'menikah'),
+(125, 'Joko Lelono', '1968-12-12', 'Surabaya, Jawa Timur', 'l', 'duda'),
+(126, 'Asep Surya', '1972-03-05', 'Tasikmalaya, Jawa Barat', 'l', 'menikah'),
+(127, 'Ronggolawe', '1980-10-08', 'Kediri, Jawa Timur', 'l', 'belum menikah'),
+(128, 'Retno', '1988-11-01', 'Ponorogo, Jawa Timur', 'p', 'janda'),
+(129, 'Tassa', '1995-03-04', 'Palu, Sulawesi Tengah', 'p', 'belum menikah');
+--===============================================================================--
+Tabel Kota:
+create table Kota(
+	Kode_Kota char(3) not null primary key, 
+	Nama_Kota varchar(20) not null, 
+	Nama_Provinsi char(30) not null,
+	Luas_Wilayah decimal(10,2) not null,
+	Populasi int(11)
+	);
+	
+INSERT INTO Kota (Kode_Kota, Nama_Kota, Nama_Provinsi, Luas_Wilayah, Populasi) VALUES
+('BDG', 'Bandung', 'Jawa Barat', 167.7, 3700000),
+('TSK', 'Tasikmalaya', 'Jawa Barat', 171.61, 1800000),
+('BBR', 'Bandung Barat', 'Jawa Barat', 105.77, 1700000),
+('CMH', 'Cimahi', 'Jawa Barat', 30.27, 601500),
+('MLG', 'Malang', 'Jawa Timur', 145.28, 874890),
+('SBY', 'Surabaya', 'Jawa Timur', 350.54, 3095026),
+('BMA', 'Bima', 'Nusa Tenggara Barat', 222.25, 163824);
+--===============================================================================--	
+Tabel Jabatan:
+create table Jabatan(
+	NIK int(3) not null, 
+	Kode_Kota char(3) not null, 
+	Tahun_Menjabat char(4),
+	Tahun_Selesai char(4),
+	Foreign Key (NIK) references Penduduk(NIK),
+	foreign key (Kode_Kota) references Kota(Kode_Kota)
+	);
+	
+INSERT INTO Jabatan (NIK, Kode_Kota, Tahun_Menjabat, Tahun_Selesai) VALUES
+(123, 'BDG', 2000, 2005),
+(123, 'BDG', 2005, 2010),
+(124, 'TSK', 2001, 2006),
+(125, 'MLG', 2001, 2006),
+(126, 'SBY', 2006, 2011),
+(127, 'SBY', 2001, 2006),
+(128, 'CMH', 2023, NULL);
+--===============================================================================--
+1. melanggar prinsip normalisasi yang disebut redundancy (redundansi). 
+	Konsep yang dilanggar adalah Third Normal Form (3NF), 
+	yang menyatakan bahwa setiap non-key attribute harus bergantung hanya pada primary key. 
+	Dalam hal ini, Nama_provinsi tidak bergantung langsung pada primary key tabel Jabatan. 
+	Masalah yang mungkin timbul adalah data redundancy dan anomaly, seperti update anomaly, 
+	insert anomaly, dan delete anomaly.
+	
+2. create table Riwayat_Pendidikan (
+	NIK int(3) not null, 
+	Nama_Sekolah varchar(30) not null,
+	Jenjang char(3) not null,
+	Tahun_Lulus date not null,
+	foreign key (nik) references Penduduk(nik)
+	);
+	alasan mengapa nama sekolah varchar, dikarenakan tidak kepastiannya jumlah data yang dimasukkan jadi menggunakan varchar lebih baik dari char,
+	jenjang char dikarenakan yang terisi hanya tk, sd, sma, smk, yang dimana data yang dimasukkan sudah pasti tidak lebih dari 3
+	tahun lulus date dikarenakan tanggal.
+	
+3. Agar meningkatkan performa kueri dengan mempercepat proses pencarian baris dengan tabel besar
+----------------------------------------------------------------------------------------------------
+4. insert into Penduduk values 
+		( 130, 'Nindya Sinaga', '1998-03-15', 'Medan, Sumatra Utara', 'p', 'belum menikah'
+	);
+
+5. update Penduduk set Tempat_Lahir ='Pemekasan, Jawa Timur' where nik=128;
+	delete from Penduduk where nik not in (select distinct nik from Jabatan);
+
+6. alter table Penduduk add Email varchar(100);
+	alter table Kota modify Luas_Wilayah decimal(10,2);
+	
+7. Select NIK, nama, substring(Tempat_Lahir, ',', 1) AS Tempat_Lahir from Penduduk;
+	Select NIK, nama, substring(Tempat_Lahir, ',', -1) AS Tempat_Lahir from Penduduk;
+	
+8. select nama, dayname(Tanggal_Lahir) as Hari_Lahir from Penduduk where year(Tanggal_Lahir) = 1980;
+
+9. Select k.Nama_Kota from Kota k join Jabatan j using(Kode_Kota)
+	where k.Populasi > 1000000
+	group by k.Kode_Kota
+	having count(distinct j.NIK) >= 2; 
+	
+10. select k.Nama_Provinsi, count(j.NIK) as jml_bupati from Kota k join Jabatan j USING(Kode_Kota)
+	where j.Tahun_Selesai is null group by k.Nama_Provinsi;
+	
+11. select nama, Tanggal_Lahir, Tempat_Lahir from Penduduk 
+	where Jenis_Kelamin = 'l' and Status_Pernikahan = 'menikah' limit 5;
+
+12. SELECT k.Nama_Provinsi
+	FROM Kota k
+	JOIN Jabatan j using(kode_kota)
+	GROUP BY k.Nama_Provinsi
+	HAVING AVG(TIMESTAMPDIFF(YEAR, STR_TO_DATE(j.Tahun_Menjabat, '%Y'), STR_TO_DATE(j.Tahun_Selesai, '%Y'))) > 1;
+	
+13. select Nama_Kota 
