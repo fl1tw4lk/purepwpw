@@ -102,10 +102,16 @@ INSERT INTO Jabatan (NIK, Kode_Kota, Tahun_Menjabat, Tahun_Selesai) VALUES
 11. select nama, Tanggal_Lahir, Tempat_Lahir from Penduduk 
 	where Jenis_Kelamin = 'l' and Status_Pernikahan = 'menikah' limit 5;
 
-12. SELECT k.Nama_Provinsi
-	FROM Kota k
-	JOIN Jabatan j using(kode_kota)
-	GROUP BY k.Nama_Provinsi
-	HAVING AVG(TIMESTAMPDIFF(YEAR, STR_TO_DATE(j.Tahun_Menjabat, '%Y'), STR_TO_DATE(j.Tahun_Selesai, '%Y'))) > 1;
+12. select k.Nama_Provinsi 
+	from Jabatan j 
+	join Kota k using(Kode_Kota)
+	group by k.Nama_Provinsi
+	having avg(YEAR(CURRENT_DATE) - j.Tahun_Menjabat) > 8;
 	
-13. select Nama_Kota 
+13. select k.Nama_Kota
+	from Jabatan j
+	join kota k using(Kode_kota)
+	join penduduk p using(NIK)
+	where j.Tahun_Menjabat is not null and p.Tanggal_Lahir is not null
+	group by k.Nama_Kota
+	having avg(TIMESTAMPDIFF(YEAR, p.Tanggal_Lahir, CONCAT(j.Tahun_Menjabat, '-01-01'))) < 40;
