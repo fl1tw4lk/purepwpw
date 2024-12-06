@@ -110,8 +110,7 @@ INSERT INTO Jabatan (NIK, Kode_Kota, Tahun_Menjabat, Tahun_Selesai) VALUES
 	
 13. select k.Nama_Kota
 	from Jabatan j
-	join kota k using(Kode_kota)
-	join penduduk p using(NIK)
-	where j.Tahun_Menjabat is not null and p.Tanggal_Lahir is not null
+	join Kota k using(Kode_kota)
+	join Penduduk p using(NIK)
 	group by k.Nama_Kota
 	having avg(TIMESTAMPDIFF(YEAR, p.Tanggal_Lahir, CONCAT(j.Tahun_Menjabat, '-01-01'))) < 40;
