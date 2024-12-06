@@ -10,15 +10,6 @@ create table Penduduk (
 	Status_Pernikahan enum('menikah', 'belum menikah', 'duda', 'janda') not null
 	);
 
-INSERT INTO Penduduk (NIK, Nama, Tanggal_Lahir, Tempat_Lahir, Jenis_Kelamin, Status_Pernikahan) VALUES
-(123, 'Andi Arjuna', '1970-01-01', 'Bandung, Jawa Barat', 'l', 'menikah'),
-(124, 'Mirnawati', '1970-02-03', 'Jakarta, DKI Jakarta', 'p', 'menikah'),
-(125, 'Joko Lelono', '1968-12-12', 'Surabaya, Jawa Timur', 'l', 'duda'),
-(126, 'Asep Surya', '1972-03-05', 'Tasikmalaya, Jawa Barat', 'l', 'menikah'),
-(127, 'Ronggolawe', '1980-10-08', 'Kediri, Jawa Timur', 'l', 'belum menikah'),
-(128, 'Retno', '1988-11-01', 'Ponorogo, Jawa Timur', 'p', 'janda'),
-(129, 'Tassa', '1995-03-04', 'Palu, Sulawesi Tengah', 'p', 'belum menikah');
---===============================================================================--
 Tabel Kota:
 create table Kota(
 	Kode_Kota char(3) not null primary key, 
@@ -28,15 +19,6 @@ create table Kota(
 	Populasi int(11)
 	);
 	
-INSERT INTO Kota (Kode_Kota, Nama_Kota, Nama_Provinsi, Luas_Wilayah, Populasi) VALUES
-('BDG', 'Bandung', 'Jawa Barat', 167.7, 3700000),
-('TSK', 'Tasikmalaya', 'Jawa Barat', 171.61, 1800000),
-('BBR', 'Bandung Barat', 'Jawa Barat', 105.77, 1700000),
-('CMH', 'Cimahi', 'Jawa Barat', 30.27, 601500),
-('MLG', 'Malang', 'Jawa Timur', 145.28, 874890),
-('SBY', 'Surabaya', 'Jawa Timur', 350.54, 3095026),
-('BMA', 'Bima', 'Nusa Tenggara Barat', 222.25, 163824);
---===============================================================================--	
 Tabel Jabatan:
 create table Jabatan(
 	NIK int(3) not null, 
@@ -46,7 +28,25 @@ create table Jabatan(
 	Foreign Key (NIK) references Penduduk(NIK),
 	foreign key (Kode_Kota) references Kota(Kode_Kota)
 	);
-	
+--===============================================================================--	
+INSERT INTO Kota (Kode_Kota, Nama_Kota, Nama_Provinsi, Luas_Wilayah, Populasi) VALUES
+('BDG', 'Bandung', 'Jawa Barat', 167.7, 3700000),
+('TSK', 'Tasikmalaya', 'Jawa Barat', 171.61, 1800000),
+('BBR', 'Bandung Barat', 'Jawa Barat', 105.77, 1700000),
+('CMH', 'Cimahi', 'Jawa Barat', 30.27, 601500),
+('MLG', 'Malang', 'Jawa Timur', 145.28, 874890),
+('SBY', 'Surabaya', 'Jawa Timur', 350.54, 3095026),
+('BMA', 'Bima', 'Nusa Tenggara Barat', 222.25, 163824);
+
+INSERT INTO Penduduk (NIK, Nama, Tanggal_Lahir, Tempat_Lahir, Jenis_Kelamin, Status_Pernikahan) VALUES
+(123, 'Andi Arjuna', '1970-01-01', 'Bandung, Jawa Barat', 'l', 'menikah'),
+(124, 'Mirnawati', '1970-02-03', 'Jakarta, DKI Jakarta', 'p', 'menikah'),
+(125, 'Joko Lelono', '1968-12-12', 'Surabaya, Jawa Timur', 'l', 'duda'),
+(126, 'Asep Surya', '1972-03-05', 'Tasikmalaya, Jawa Barat', 'l', 'menikah'),
+(127, 'Ronggolawe', '1980-10-08', 'Kediri, Jawa Timur', 'l', 'belum menikah'),
+(128, 'Retno', '1988-11-01', 'Ponorogo, Jawa Timur', 'p', 'janda'),
+(129, 'Tassa', '1995-03-04', 'Palu, Sulawesi Tengah', 'p', 'belum menikah');
+
 INSERT INTO Jabatan (NIK, Kode_Kota, Tahun_Menjabat, Tahun_Selesai) VALUES
 (123, 'BDG', 2000, 2005),
 (123, 'BDG', 2005, 2010),
